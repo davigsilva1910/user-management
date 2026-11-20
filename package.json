@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "prestart": "npm run migrate -- up",
+    "migrate": "node-pg-migrate"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +23,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.2",
     "@types/pg": "^8.23.1",
+    "node-pg-migrate": "^9.0.0",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   }

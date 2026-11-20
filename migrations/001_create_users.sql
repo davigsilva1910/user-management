@@ -2,6 +2,3 @@ CREATE TABLE public.users(
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 )
-
-INSERT INTO public.users(name) 
-VALUES('Davi'), ('João')
