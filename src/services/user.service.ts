@@ -1,5 +1,7 @@
 import { UserDTO } from "../dtos/user.dto.js";
 import { IUserRepository } from "../protocols/user.repository.protocols.js";
+import {ValidationError} from "../errors/ValidationError.js"
+import {NotFoundError} from "../errors/NotFoundError.js"
 
 export class UserService {
     private userRepository: IUserRepository;
@@ -14,8 +16,13 @@ export class UserService {
         return this.userRepository.getUsers();
     }
 
-    getUserById(id: number): Promise<UserDTO | null> {
-        return this.userRepository.getUserById(id);
+    async getUserById(id: number): Promise<UserDTO | null> {
+        const userReturned = await this.userRepository.getUserById(id);
+
+        if(userReturned === null) {
+            throw new NotFoundError("Usuário não encontrado.")
+        }
+        return userReturned;
     }
 
     userRegister(name: string): Promise<UserDTO> {
@@ -26,24 +33,34 @@ export class UserService {
         // 2. Valida se o nome está vazio
         if (nomeTratado === "") {
             // Lança um erro com uma mensagem clara
-            throw new Error("O nome do usuário não pode estar vazio.");
+            throw new ValidationError("O nome do usuário não pode estar vazio.");
         }
 
         // const apenasLetras = /^[a-zA-Z]+$/;
         const apenasLetras = /^[\p{L} ]+$/u;
 
         if(!apenasLetras.test(nomeTratado)) {
-            throw new Error("O nome não pode conter números ou caracteres especiais")
+            throw new ValidationError("O nome não pode conter números ou caracteres especiais")
         }
 
         return this.userRepository.userRegister(nomeTratado);
     }
 
-    deleteRegister(id: number) : Promise<UserDTO> {
-        if(id === null) {
-            throw new Error("O campo ID deve ser informado");
+    async deleteRegister(id: number) : Promise<UserDTO> {
+        // if(id === null) {
+        //     throw new ValidationError("O campo ID deve ser informado");
+        // }
+
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new ValidationError("ID inválido.");
         }
 
-        return this.userRepository.deleteRegister(id)
+        const userDeleted = await this.userRepository.deleteRegister(id) 
+
+        if(userDeleted === null) {
+            throw new NotFoundError("Usuário não existe.")
+        }
+
+        return userDeleted;
     }
 }

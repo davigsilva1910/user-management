@@ -1,6 +1,7 @@
 import { UserDTO } from "../dtos/user.dto.js"
 import { IUserRepository } from "../protocols/user.repository.protocols.js"
 import { pool } from "../database/connection.js"
+import {DatabaseError} from "../errors/DatabaseError.js"
 
 // implements assume que UserRepository irá cumprir o contrato de Protocols
 export class UserRepository implements IUserRepository {
@@ -14,8 +15,9 @@ export class UserRepository implements IUserRepository {
 
             return resultado.rows as UserDTO[];
         } catch (err) {
-            console.error('Erro ao executar a consulta:', err);
-            throw err;
+            // console.error('Erro ao executar a consulta:', err);
+            // throw err;
+            throw new DatabaseError("Erro ao executar a consulta.", err)
         }
     }
 
@@ -28,7 +30,7 @@ export class UserRepository implements IUserRepository {
 
             return user ?? null;
         } catch (err) {
-            throw err;
+            throw new DatabaseError("Erro ao executar a consulta.", err)
         }
     }
 
@@ -39,19 +41,19 @@ export class UserRepository implements IUserRepository {
 
             return resultado.rows[0];
         } catch (err) {
-            console.error("Erro ao registrar usuário:", err);
-            throw err;
+            // console.error("Erro ao registrar usuário:", err);
+            throw new DatabaseError("Erro ao registrar usuário.", err);
         }
     }
 
-    async deleteRegister(id: number) : Promise<UserDTO> {
+    async deleteRegister(id: number) : Promise<UserDTO | null> {
         try {
             const sql = "DELETE FROM users WHERE id = $1 RETURNING *"
             const resultado = await pool.query(sql, [id])
-            return resultado.rows[0];
+            return resultado.rows[0] ?? null;
         } catch (err) {
-            console.error("Erro ao apagar usuário: ", err);
-            throw err;
+            // console.error("Erro ao apagar usuário: ", err);
+            throw new DatabaseError("Erro ao apagar usuário.", err);
         }
     }
 }
