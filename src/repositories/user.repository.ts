@@ -11,23 +11,18 @@ export class UserRepository implements IUserRepository {
     async getUsers(): Promise<UserDTO[]> {
         try {
             const sql = "SELECT id, name FROM users" // Query SQL
-            const resultado = await pool.query(sql)
-
-            return resultado.rows as UserDTO[];
-
-            console.log(resultado.rows)
-            console.log(typeof resultado.rows[0]?.id)
+            const resultado = await pool.query<UserDTO>(sql) // Já informa o tipo esperado aqui na consulta
+            
+            return resultado.rows;
         } catch (err) {
-            // console.error('Erro ao executar a consulta:', err);
-            // throw err;
             throw new DatabaseError("Erro ao executar a consulta.", err)
         }
     }
 
-    async getUserById(id: number): Promise<UserDTO | null> {
+    async getUserById(id: string): Promise<UserDTO | null> {
         try {
             const sql = `SELECT id, name FROM users WHERE id = $1`
-            const resultado = await pool.query(sql, [id]) // Passando id de forma posicional para evitar SQL Injection
+            const resultado = await pool.query<UserDTO>(sql, [id]) // Passando id de forma posicional para evitar SQL Injection
 
             const user = resultado.rows[0] // Pega o resultado retornado, pois ele ainda vem dentro de um array
 
@@ -40,7 +35,7 @@ export class UserRepository implements IUserRepository {
     async userRegister(name: string): Promise<UserDTO> {
         try {
             const sql = "INSERT INTO users(name) VALUES($1) RETURNING id, name" // Evitar uso de 'RETURNING *' para não retornar dados sensíveis 
-            const resultado = await pool.query(sql, [name])
+            const resultado = await pool.query<UserDTO>(sql, [name])
 
             return resultado.rows[0];
         } catch (err) {
@@ -49,10 +44,10 @@ export class UserRepository implements IUserRepository {
         }
     }
 
-    async deleteRegister(id: number) : Promise<UserDTO | null> {
+    async deleteRegister(id: string) : Promise<UserDTO | null> {
         try {
             const sql = "DELETE FROM users WHERE id = $1 RETURNING id, name"
-            const resultado = await pool.query(sql, [id])
+            const resultado = await pool.query<UserDTO>(sql, [id])
             return resultado.rows[0] ?? null;
         } catch (err) {
             // console.error("Erro ao apagar usuário: ", err);

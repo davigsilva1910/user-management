@@ -4,6 +4,14 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 
 const app = express(); // Chamada do express
 
+app.get("/teste", (req, res) => {
+    console.log("CHEGOU NO ENDPOINT!");
+
+    return res.status(200).json({
+        message: "Servidor funcionando!"
+    });
+});
+
 app.use(express.json())
 
 // Registro da rota criada
