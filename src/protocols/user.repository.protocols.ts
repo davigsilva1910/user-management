@@ -7,5 +7,5 @@ export interface IUserRepository {
 
     userRegister(name: string) : Promise<UserDTO>;
 
-    deleteRegister(id: number) : Promise<UserDTO>;
+    deleteRegister(id: number) : Promise<UserDTO | null>; // Pode retornar null quando nenhum usuário corresponde ao ID informado
 }

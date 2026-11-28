@@ -14,6 +14,9 @@ export class UserRepository implements IUserRepository {
             const resultado = await pool.query(sql)
 
             return resultado.rows as UserDTO[];
+
+            console.log(resultado.rows)
+            console.log(typeof resultado.rows[0]?.id)
         } catch (err) {
             // console.error('Erro ao executar a consulta:', err);
             // throw err;
@@ -36,7 +39,7 @@ export class UserRepository implements IUserRepository {
 
     async userRegister(name: string): Promise<UserDTO> {
         try {
-            const sql = "INSERT INTO users(name) VALUES($1) RETURNING *"
+            const sql = "INSERT INTO users(name) VALUES($1) RETURNING id, name" // Evitar uso de 'RETURNING *' para não retornar dados sensíveis 
             const resultado = await pool.query(sql, [name])
 
             return resultado.rows[0];
@@ -48,7 +51,7 @@ export class UserRepository implements IUserRepository {
 
     async deleteRegister(id: number) : Promise<UserDTO | null> {
         try {
-            const sql = "DELETE FROM users WHERE id = $1 RETURNING *"
+            const sql = "DELETE FROM users WHERE id = $1 RETURNING id, name"
             const resultado = await pool.query(sql, [id])
             return resultado.rows[0] ?? null;
         } catch (err) {

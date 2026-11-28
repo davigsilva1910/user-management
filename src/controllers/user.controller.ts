@@ -14,13 +14,6 @@ export class UserController {
 
             return res.status(200).json(users);
         } catch (err) {
-            // console.error("Erro capturado na Controller:", err);
-
-            // // Se o repositório falhar, responde com status 500 (Erro Interno do Servidor) em JSON
-            // res.status(500).json({
-            //     error: "Internal Server Error",
-            //     message: "Não foi possível listar os usuários no momento."
-            // });
             return next(err)
         }
     }
@@ -42,12 +35,6 @@ export class UserController {
             return res.status(200).json(userReturned);
 
         } catch (err) {
-            // console.error("Erro ao buscar usuário:", err);
-
-            // return res.status(500).json({
-            //     error: "Internal Server Error",
-            //     mensagem: "Não foi possível buscar o usuário no momento."
-            // });
             return next(err);
         }
     }
@@ -64,19 +51,12 @@ export class UserController {
                 user: novoUsuario
             })
         } catch (err) {
-            // return res.status(400).json({
-            //     mensagem: err.message
-            // })
             return next(err);
         }
 
     }
 
     async deleteUserRegister(req: Request, res: Response, next: NextFunction) {
-        // const dados = req.body
-        // console.log(dados)
-        // const userId = dados.id
-        // console.log(userId)
         const { id } = req.params
         const userID = Number(id)
 
@@ -87,9 +67,6 @@ export class UserController {
                 user: deleteUser
             })
         } catch (err) {
-            // return res.status(400).json({
-            //     mensagem: err.message
-            // })
             return next(err)
         }
     }
